@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Ana Sayfa - Göz Sağlığı{% endblock %}
+{% block content %}
+<section style="text-align:center; margin-bottom: 50px;">
+    <h1 style="font-size:3rem; color:#1e3c72; font-weight: 900; margin-bottom: 15px;">Göz Sağlığınız İçin En İyi Destek</h1>
+    <p style="font-size:1.3rem; max-width:800px; margin: 0 auto; color:#444;">
+        Gözleriniz, dünyayı keşfetmenizi sağlayan en değerli organlarınızdandır. Göz hastalıklarının erken teşhisi ve tedavisi, yaşam kalitenizi korumanın anahtarıdır.
+        Bu projede, göz sağlığı hakkında kapsamlı bilgiler, interaktif eğitimler ve yapay zeka destekli hastalık tahmin uygulaması ile yanınızdayız.
+    </p>
+</section>
+
+<section style="display:flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-bottom: 60px;">
+    <div style="flex: 1 1 300px; max-width: 350px; background: #f0f8ff; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(30,60,114,0.15);">
+        <img src="{{ url_for('static', filename='images/eye_care_1.jpg') }}" alt="Göz Bakımı" style="width:100%; border-radius: 15px; margin-bottom: 20px;">
+        <h2 style="color:#1e3c72; margin-bottom: 15px;">Göz Hastalıklarının Önemi</h2>
+        <p style="color:#555; font-size:1rem; line-height:1.5;">
+            Katarakt, glokom, üveit gibi hastalıklar erken fark edilmezse kalıcı görme kaybına yol açabilir. Düzenli kontroller ve bilinçli bakım hayat kurtarır.
+        </p>
+    </div>
+    <div style="flex: 1 1 300px; max-width: 350px; background: #f0f8ff; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(30,60,114,0.15);">
+        <img src="{{ url_for('static', filename='images/eye_care_2.jpg') }}" alt="Göz Muayenesi" style="width:100%; border-radius: 15px; margin-bottom: 20px;">
+        <h2 style="color:#1e3c72; margin-bottom: 15px;">Erken Teşhis Hayat Kurtarır</h2>
+        <p style="color:#555; font-size:1rem; line-height:1.5;">
+            Göz hastalıklarının belirtileri çoğu zaman sinsi ilerler. Yapay zeka destekli uygulamamızla erken teşhis şansınızı artırabilirsiniz.
+        </p>
+    </div>
+    <div style="flex: 1 1 300px; max-width: 350px; background: #f0f8ff; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(30,60,114,0.15);">
+        <img src="{{ url_for('static', filename='images/eye_doctor.jpg') }}" alt="Doktor" style="width:100%; border-radius: 15px; margin-bottom: 20px;">
+        <h2 style="color:#1e3c72; margin-bottom: 15px;">Yerel Göz Doktorları</h2>
+        <p style="color:#555; font-size:1rem; line-height:1.5;">
+            Bölgenizdeki uzman göz doktorları ile iletişime geçin. Düzenli muayene ve profesyonel destek için <a href="{{ url_for('bilgi') }}" style="color:#1e3c72; font-weight:700;">bilgi sayfamızı</a> ziyaret edin.
+        </p>
+    </div>
+</section>
+
+<section style="background: #1e3c72; color: white; padding: 40px 20px; border-radius: 20px; max-width: 900px; margin: 0 auto;">
+    <h2 style="text-align:center; margin-bottom: 30px;">Göz Sağlığınızı Korumanın 5 Altın Kuralı</h2>
+    <ul style="max-width: 700px; margin: 0 auto; font-size: 1.1rem; line-height: 1.8;">
+        <li>1. Düzenli göz muayenelerinizi aksatmayın.</li>
+        <li>2. Uzun süre ekrana bakmaktan kaçının, 20-20-20 kuralını uygulayın.</li>
+        <li>3. Gözlerinizi UV ışınlarından koruyun, güneş gözlüğü kullanın.</li>
+        <li>4. Dengeli beslenin, A vitamini açısından zengin gıdalar tüketin.</li>
+        <li>5. Gözlerinizi zorlayacak ağır aktivitelerden kaçının.</li>
+    </ul>
+</section>
+{% endblock %}

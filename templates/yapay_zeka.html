@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Göz Hastalığı Tahmin Uygulaması{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>Göz Hastalığı Tahmin Uygulaması</h1>
+    <p class="lead">
+        Yüklediğiniz göz fotoğrafını yapay zeka ile ön analiz eder. Net, iyi aydınlatılmış bir fotoğraf yükleyin.
+        Çıkan sonuçlar yalnızca bilgilendirme amaçlıdır — kesin tanı için uzman göz doktoruna başvurunuz.
+    </p>
+</section>
+
+<section class="upload-card">
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input id="fileInput" type="file" name="file" accept="image/*" required>
+        <button type="submit" class="btn">Tahmin Et</button>
+    </form>
+
+    <div id="result" class="result-box" style="display:none;"></div>
+
+    <div id="detailed" class="detail-box">
+        <h2>Tahmin Sonuçları Ne Anlama Geliyor?</h2>
+        <ul>
+            <li><strong>Şiş Göz:</strong> Göz kapaklarında enfeksiyon veya iltihap belirtisi olabilir.</li>
+            <li><strong>Katarakt:</strong> Göz merceğinde bulanıklık, görme kalitesinde azalma.</li>
+            <li><strong>Çapraz Göz (Şaşılık):</strong> Gözlerin hizalanmasında bozukluk, çift görme riski.</li>
+            <li><strong>Glokom:</strong> Göz içi basıncının artması, optik sinir hasarı riski.</li>
+            <li><strong>Üveit:</strong> Gözün orta tabakasında iltihaplanma, acil tedavi gerektirir.</li>
+            <li><strong>Sağlıklı:</strong> Gözde belirgin hastalık belirtisi yok.</li>
+        </ul>
+
+        <p class="note">
+            <strong>Güven Skoru:</strong> Modelin bu tahmine olan güven oranıdır. Örneğin <em>57.97%</em>, modelin bu sınıfa %57.97 oranında güven duyduğunu gösterir.
+            Güven skoru yüksek olsa da (ör. > 85%) bile kesin tanı için doktor muayenesi gereklidir.
+        </p>
+
+        <div id="advice" class="advice">
+            <h3>Ne yapmalısınız?</h3>
+            <ul id="advice-list">
+                <li>1) Eğer sonuç "Sağlıklı" ise: düzenli kontrollerinizi sürdürün.</li>
+                <li>2) Eğer başka bir hastalık önerildiyse: <strong>erken muayene</strong> önemlidir — randevu alın.</li>
+                <li>3) Güven skoru düşük (ör. < 60%) ise: fotoğrafı tekrar net bir ışıkta çekip deneyin.</li>
+                <li>4) Acil belirtiler (şiddetli ağrı, ani görme kaybı) varsa: hemen acil servise başvurun.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById("uploadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = "<p class='muted'>Tahmin yapılıyor, lütfen bekleyin...</p>";
+    resultDiv.className = "result-box loading";
+
+    fetch("/predict", {
+        method: "POST",
+        body: formData
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        if (data.error) {
+            resultDiv.className = "result-box error";
+            resultDiv.innerHTML = `<h2>Hata</h2><p>${data.error}</p>`;
+            return;
+        }
+
+        const turkce = data.class;
+        const confidence = (data.confidence * 100).toFixed(2);
+
+        const meta = {
+            "sağlıklı": { title: "Sağlıklı Göz", color: "#e8f5e9", textColor:"#2e7d32", message: "Gözlerinizde belirgin bir hastalık işareti tespit edilmedi. Düzenli kontrollerinizi sürdürün." },
+            "şiş göz": { title: "Şiş Göz", color: "#fff3e0", textColor:"#ef6c00", message: "Göz kapaklarında enfeksiyon/iltihap olabilir. En kısa sürede göz doktoruna başvurun." },
+            "katarakt": { title: "Katarakt", color: "#fff3e0", textColor:"#ef6c00", message: "Göz merceğinizde bulanıklık olabilir. Göz doktoruna danışıp değerlendirme alın." },
+            "çapraz göz": { title: "Çapraz Göz (Şaşılık)", color: "#f3e5f5", textColor:"#6a1b9a", message: "Göz hizalanmasında sorun olabilir. Özellikle çocuklarda erken müdahale önemlidir." },
+            "glokom": { title: "Glokom", color: "#e0f7fa", textColor:"#00796b", message: "Göz içi basıncı riski mevcut olabilir. Optik sinir hasarı riskine karşı acil değerlendirme gereklidir." },
+            "üveit": { title: "Üveit", color: "#fffde7", textColor:"#fbc02d", message: "Gözde iltihaplanma olabilir. Acil tedavi gerekebilir; uzmana başvurun." }
+        };
+
+        const info = meta[turkce] || { title: turkce, color:"#e0f7fa", textColor:"#006064", message: "Detaylı değerlendirme için göz doktoruna başvurunuz." };
+
+        resultDiv.className = "result-box";
+        resultDiv.style.backgroundColor = info.color;
+        resultDiv.style.color = info.textColor;
+        resultDiv.innerHTML = `
+            <h2>Tahmin Edilen Hastalık: ${info.title}</h2>
+            <p><strong>Güven Skoru:</strong> ${confidence}%</p>
+            <p style="margin-top:10px;">${info.message}</p>
+            <hr style="margin:15px 0;">
+            <p style="font-size:0.95rem; color: #333;">Neden doktora gitmeliyim?<br>
+            Yapay zeka bir destek aracıdır; doğru ve kişiselleştirilmiş tedavi yalnızca uzman muayenesi ile konulur. Doktor; fizik muayene, görme testi, göz içi basınç ölçümü ve gerekli görüntülemeleri yaparak kesin tanıyı koyar.</p>
+        `;
+
+        const adviceList = document.getElementById("advice-list");
+        if (adviceList) {
+            if (turkce === "glokom" || turkce === "üveit") {
+                adviceList.innerHTML = `
+                    <li>1) Acil olarak göz uzmanına başvurun.</li>
+                    <li>2) Ağrı, kızarıklık, ani görme değişimi varsa hemen acil servise gidin.</li>
+                    <li>3) Doktorunuz gerekirse görüntüleme ve basınç ölçümleri isteyecektir.</li>
+                `;
+            }
+        }
+
+    })
+    .catch(err => {
+        resultDiv.className = "result-box error";
+        resultDiv.innerHTML = `<h2>Hata</h2><p>İstek sırasında bir hata oluştu. Lütfen tekrar deneyin.</p>`;
+        console.error(err);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Göz Sağlığı{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; }
+    nav {
+      background: #1e3c72;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+    }
+    nav .brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+      text-decoration: none;
+      color: white;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    nav ul li a:hover {
+      text-decoration: underline;
+    }
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #f4f7fb;
+      color: #555;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('index') }}" class="brand">Göz Sağlığı</a>
+    <ul>
+      <li><a href="{{ url_for('index') }}">Ana Sayfa</a></li>
+      <li><a href="{{ url_for('tahmin') }}">Tahmin</a></li>
+      <li><a href="{{ url_for('bilgi') }}">Bilgi</a></li>
+      <li><a href="{{ url_for('oyunlar') }}">Oyunlar</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    © 2025 Göz Sağlığı Projesi - Bilgilendirme amaçlıdır. Kesin tanı için doktora başvurunuz.
+  </footer>
+</body>
+</html>
